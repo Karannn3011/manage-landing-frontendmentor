@@ -7,131 +7,125 @@ import { useRef, useState, useEffect } from "react";
 import GetStarted from "./GetStartedBtn.jsx";
 
 function Slider() {
-  const [current, setCurrent] = useState(0);
-  const intervalRef = useRef(null);
-  const totalSlides = 4;
+  const boxRef = useRef(null);
+  const buttonRef = useRef(null);
+  const [current, setCurrent] = useState(1);
 
   useEffect(() => {
-    const startAutoScroll = () => {
-      intervalRef.current = setInterval(() => {
-        setCurrent((prev) => (prev + 1) % totalSlides);
-      }, 5000);
-    };
+    const handleScroll = () => {
+      const box = boxRef.current;
+      if (!box) return;
 
-    startAutoScroll();
+      if (current === 4) {
+        box.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        });
+        setCurrent(1);
+      } else {
+        let scrollLeft;
+        scrollLeft = current * box.innerWidth;
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+        box.scrollTo({
+          top: 0,
+          left: scrollLeft,
+          behavior: "smooth",
+        });
+        setCurrent(current + 1);
       }
     };
-  }, []);
 
-  const handleManualNavigation = (index) => {
-    setCurrent(index);
-
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    setTimeout(() => {
-      intervalRef.current = setInterval(() => {
-        setCurrent((prev) => (prev + 1) % totalSlides);
-      }, 5000);
-    }, 5000); //
-  };
-
-  // Pause auto-scroll on hover
-  const handleMouseEnter = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    intervalRef.current = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % totalSlides);
+    const interval = setInterval(() => {
+      if (buttonRef.current) {
+        buttonRef.current.click();
+      }
     }, 5000);
-  };
+
+    return () => clearInterval(interval);
+  }, [current]);
 
   return (
     <>
       <div
-        className="carousel pr-5 flex flex-row *:px-5 pt-10 scroll-smooth my-5 lg:my-10 w-full lg:overflow-x-visible"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        id="container"
+        ref={boxRef}
+        className="mb-10 mx-auto *:pt-20 lg:*:pt-25 w-screen snap-center snap-mandatory no-scrollbar overflow-x-scroll scroll-smooth"
       >
         <div
-          id="item0"
-          className={`carousel-item w-full ${
-            current === 0 ? "block" : "hidden"
-          }`}
+          id="track"
+          className="flex w-[400vw] lg:w-[400vw] flex-row "
         >
           <Testimonial
-            name="Ali Bravo"
-            av={ali}
-            said="We have been able to cancel so many other subscriptions since using 
-      Manage. There is no more cross-channel confusion and everyone is much 
-      more focused."
-          />
-        </div>
-        <div
-          id="item1"
-          className={`carousel-item w-full ${
-            current === 1 ? "block" : "hidden"
-          }`}
-        >
-          <Testimonial
-            name="Anisha Li"
+            current={current}
+            id="1"
             av={anisha}
-            said="Manage has supercharged our team's workflow. The ability to maintain 
-      visibility on larger milestones at all times keeps everyone motivated."
+            name="Anisha Li"
+            said="“Manage has supercharged our team’s workflow. The ability to maintain 
+  visibility on larger milestones at all times keeps everyone motivated.”"
           />
-        </div>
-        <div
-          id="item2"
-          className={`carousel-item w-full ${
-            current === 2 ? "block" : "hidden"
-          }`}
-        >
           <Testimonial
-            name="Richard Watts"
+            current={current}
+            id="2"
+            av={ali}
+            name="Ali Bravo"
+            said="“We have been able to cancel so many other subscriptions since using 
+  Manage. There is no more cross-channel confusion and everyone is much 
+  more focused.”"
+          />
+          <Testimonial
+            current={current}
+            id="3"
             av={richard}
-            said="Manage allows us to provide structure and process. It keeps us organized 
-      and focused. I can't stop recommending them to everyone I talk to!"
+            name="Richard Watts"
+            said="“Manage allows us to provide structure and process. It keeps us organized 
+  and focused. I can’t stop recommending them to everyone I talk to!”"
           />
-        </div>
-        <div
-          id="item3"
-          className={`carousel-item w-full ${
-            current === 3 ? "block" : "hidden"
-          }`}
-        >
           <Testimonial
-            name="Shanai Gough"
+            current={current}
+            id="4"
             av={shanai}
-            said="Their software allows us to track, manage and collaborate on our projects 
-      from anywhere. It keeps the whole team in-sync without being intrusive."
+            name="Shanai Gough"
+            said="“Their software allows us to track, manage and collaborate on our projects 
+  from anywhere. It keeps the whole team in-sync without being intrusive.”"
           />
         </div>
       </div>
-      <div className="lg:invisible flex w-full justify-center gap-2 py-2">
-        {[0, 1, 2, 3].map((i) => {
+
+      <button
+        id="scroll"
+        ref={buttonRef}
+        onClick={() => {
+          const box = boxRef.current;
+          if (!box) return;
+
+          if (current === 4) {
+            box.scrollTo({ left: 0, behavior: "smooth" });
+            setCurrent(1);
+          } else {
+            box.scrollTo({
+              left: current * window.screen.width,
+              behavior: "smooth",
+            });
+            setCurrent((prev) => prev + 1);
+          }
+        }}
+        className="invisible"
+      ></button>
+      <div className="flex lg:hidden flex-row  w-20 mx-auto gap-x-3">
+        {[1, 2, 3, 4].map((e, i) => {
           return (
             <div
               key={i}
-              onClick={() => handleManualNavigation(i)}
-              className={`w-3 h-3 border border-bright-red rounded-full cursor-pointer transition-colors duration-300 ${
-                current === i
-                  ? `bg-bright-red`
-                  : `bg-transparent hover:bg-bright-red hover:bg-opacity-50`
+              className={`w-3 rounded-full h-3 border border-bright-red ${
+                current == e ? `bg-bright-red` : `bg-transparent`
               }`}
-            />
+            ></div>
           );
         })}
       </div>
-      <div className="flex flex-row justify-center">
-        <GetStarted className="my-5 lg:my-0 mx-auto" />
+      <div className="flex items-center justify-center my-10 lg:mb-10 lg:my-0">
+        <GetStarted className="" />
       </div>
     </>
   );

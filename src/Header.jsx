@@ -28,7 +28,7 @@ function Header() {
               {menu && <Menu />}
             </div>
             <div className="hidden lg:block">
-              <ul className="*:cursor-pointer flex flex-row gap-x-9 *:font-[600] lg:*:font-[500] *:text-very-dark-blue">
+              <ul className="*:cursor-pointer *:hover:text-black/50 transition-all duration-200 flex flex-row gap-x-9 *:font-[600] lg:*:font-[500] *:text-very-dark-blue">
             <li>Pricing</li>
             <li>Product</li>
             <li>About Us</li>
